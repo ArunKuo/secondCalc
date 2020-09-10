@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日期秒數計算</title>
+<style>
+* {
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 1.1em;
+    text-align: center;
+
+}
+
+body {
+    background-color: rgba(193, 217, 236, 0.479);
+    display: inline-block;
+}
+
+h1{
+    font-size: 1.5em;
+}
+.nowTime{
+    font-size: 1.3em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#nowDate {
+    border: none;
+    text-align: center;    
+}
+
+.chooseDate {
+   margin: 10px 0 20px 0;
+}
+
+#showSeconds p {
+    margin: 0 10px 0 10px;
+}
+
+.refresh {
+padding:0 20px;
+border-radius: 10px;
+}
+
+.refresh:hover {
+    background-color: rgb(127, 161, 255);
+    color:rgb(255, 255, 255);
+}
+
+#targetDate {
+    border-radius: 10px;
+    border:none;
+}
+</style>
+
+</head>
+<body>
+    <h1>日期秒數計算</h1>
+    <div class="nowTime">        
+        <input type="datetime-local" id="nowDate" disabled>    
+    </div>
+    <div class="chooseDate">
+        <label>請選擇欲跳轉之日期時間</label>
+        <input type="datetime-local" id="targetDate" class="targetDate" name="targetDate">    
+    </div>
+    <p id="showSeconds"></p>
+    <button class="refresh" onclick="window.location.reload();">重置</button>
+   
+   
+   
+   <script>
+        let nowDateEl = document.getElementById("nowDate");
+        let targetEl = document.getElementById("targetDate");        
+        let showEl = document.getElementById("showSeconds");
+        
+        let updateTime = function(){
+            let nowTime = new Date();
+            let year = nowTime.getFullYear();
+            let month = nowTime.getMonth() +1;
+            let day = nowTime.getDate();
+            let hour = nowTime.getHours();
+            let minute = nowTime.getMinutes();
+
+            month = (month < 10 ? "0":"") + month;
+            day = (day < 10 ? "0" : "") + day;
+            hour = (hour < 10 ? "0" : "") + hour;
+            minute = (minute < 10 ? "0" : "") + minute;
+        
+            let nowTimeString = `${nowTime.getFullYear()}-${month}-${day}T${hour}:${minute}`;
+      
+            nowDateEl.value = nowTimeString;
+            targetEl.min = nowTimeString;
+        };
+
+        setInterval(updateTime,1000);
+
+        targetEl.addEventListener("change",function(){            
+            let parseDateTarget = Date.parse(targetEl.value);
+            let parseDateNow = Date.parse(nowDateEl.value);
+            let result = (parseDateTarget - parseDateNow)/1000;
+           showEl.innerHTML = `<p>與現在時間相差<span style="color:red; font-size:1.5em;"> ${result} </span>秒</p>`;
+        });
+        
+        let detectChange = function(){            
+            let parseDateTarget = Date.parse(targetEl.value);
+            let parseDateNow = Date.parse(nowDateEl.value);
+            let result = !parseDateTarget ? 0 : (parseDateTarget - parseDateNow)/1000;
+            showEl.innerHTML = `<p>與現在時間相差<span style="color:red; font-size:1.5em;"> ${result} </span>秒</p>`;
+        };
+
+        setInterval(detectChange,1000);
+        
+    </script>
+</body>
+</html>
